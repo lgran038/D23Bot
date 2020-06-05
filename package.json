@@ -1,0 +1,22 @@
+{
+  "name": "d23bot",
+  "version": "1.0.0",
+  "description": "Discord Bot for DSA D23 club",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lgran038/D23Bot.git"
+  },
+  "author": "Luis Granados",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lgran038/D23Bot/issues"
+  },
+  "homepage": "https://github.com/lgran038/D23Bot#readme",
+  "dependencies": {
+    "discord.js": "^12.2.0"
+  }
+}
