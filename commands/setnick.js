@@ -1,10 +1,10 @@
 const { prefix } = require('../config.json');
 
 module.exports = {
-	name: 'role',
-    description: 'Adds a role to a user. If the user already has the role, then the role is removed.',
+	name: 'setnick',
+    description: 'Sets the nickname of a user.',
     args: 2,
-    usage: '<@user> <role>',
+    usage: '<@user> <nickname>',
     guildOnly: true,
     mentions: 1,
     minimumRole: "Co-Leader",
@@ -18,30 +18,24 @@ module.exports = {
             return message.reply(`Oops! A user mention is required for this command!\nThe proper usage would be: \`${prefix}${this.name} ${this.usage}\``);
 
         let targetMember = message.guild.members.cache.find(member => member.user.id == targetUser.id);
-        let targetRole = message.guild.roles.cache.find(role => role.name.toLowerCase() == args[1].toLowerCase());
         if (!targetMember)
             return message.channel.reply(`Oops! Can't find member '${targetUser.username}' in this server`);
 
-        if (!targetRole)
-            return message.channel.reply(`Oops! Can't find role ${args[1]} in this server`);
-        
+        let targetRole = targetMember.roles.highest;
         let authorRole = authorMember.roles.highest;
         if (authorRole && authorRole.comparePositionTo(targetRole) < 1) {
             return message.reply(
-                `Oops! It seems like you don't have permissions to set ${args[0]}'s role to ${targetRole.name}.` +
-                `\nYour highest role must be higher than the role you are setting`
+                `Oops! It seems like you don't have permissions to set ${args[0]}'s nickname.` +
+                `\nYour highest role must be higher than the user's highest role`
             );
         }
 
-        if (targetMember.roles.cache.find(role => role.id == targetRole.id)) {
-            targetMember.roles.remove(targetRole);
-            return message.channel.send(`Removing role **${targetRole.name}** from ${args[0]}`);
-        }
-        else {
-            targetMember.roles.add(targetRole);
-            return message.channel.send(`Adding role **${targetRole.name}** to ${args[0]}`);
-        }
-    
-        
+        let currentName = targetMember.nickname || targetMember.user.username;
+        targetMember.setNickname(args[1]);
+        return message.channel.send(
+            `Setting ${currentName}'s nickname to ${args[1]}` + 
+            `\n Say Goodbye to **${currentName}** and heeelllooo to **${args[1]}**!` + 
+            `\nhttps://media.giphy.com/media/Nx0rz3jtxtEre/giphy.gif`
+        );
 	},
 };

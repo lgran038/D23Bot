@@ -1,11 +1,11 @@
-const { prefix } = require('../config.json');
+const { prefix, cooldown } = require('../config.json');
 
 module.exports = {
 	name: 'help',
 	description: 'List all of my commands or info about a specific command.',
 	aliases: ['commands'],
 	usage: '[command name]',
-	cooldown: 5,
+	cooldown: 1,
 	execute(message, args) {
 		const data = [];
         const { commands } = message.client;
@@ -38,8 +38,9 @@ module.exports = {
         if (command.aliases) data.push(`**Aliases:** ${command.aliases.join(', ')}`);
         if (command.description) data.push(`**Description:** ${command.description}`);
         if (command.usage) data.push(`**Usage:** ${prefix}${command.name} ${command.usage}`);
+        if (command.roles) data.push(`**Roles:** ${command.roles.join(', ')}`);
 
-        data.push(`**Cooldown:** ${command.cooldown || 3} second(s)`);
+        data.push(`**Cooldown:** ${command.cooldown || cooldown} second(s)`);
 
         message.channel.send(data, { split: true });
     },
