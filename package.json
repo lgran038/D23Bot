@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/lgran038/D23Bot#readme",
   "dependencies": {
-    "discord.js": "^12.2.0"
+    "@keyv/mongo": "^1.1.0",
+    "discord.js": "^12.2.0",
+    "mongodb": "^3.5.8"
   }
 }
