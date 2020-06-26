@@ -39,6 +39,7 @@ module.exports = {
         if (command.aliases) data.push(`**Aliases:** ${command.aliases.join(', ')}`);
         if (command.description) data.push(`**Description:** ${command.description}`);
         if (command.usage) data.push(`**Usage:** ${prefix}${command.name} ${command.usage}`);
+        if (command.example) data.push(`**Example:** ${prefix}${command.name} ${command.example}`);
         if (command.minimumRole) data.push(`**Required Role:** Must be at least a(n) ${command.minimumRole}`);
 
         data.push(`**Cooldown:** ${command.cooldown || cooldown} second(s)`);

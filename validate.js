@@ -10,7 +10,7 @@ module.exports.cooldowns = new Discord.Collection();
  * @param {Message} message 
  * @param {string []} args 
  */
-module.exports.validate = (discordClient, message, args) => {
+module.exports.validate = (discordClient, message, args, db) => {
     if (!message.content.startsWith(prefix) || message.author.bot || message.content.length < 2) return;
     
     const commandName = args.shift().toLowerCase();
@@ -19,6 +19,11 @@ module.exports.validate = (discordClient, message, args) => {
 		|| discordClient.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
     if (!command) return null;
+
+    if (command.dbOnly && !db) {
+        message.channel.send(`${utils.reactError()}. I can\'t seem to connect to the server. Please try again soon.`);
+        return;
+    }
 
     if ((command.guildOnly) && message.channel.type !== 'text') {
         message.reply(`I can\'t execute that command inside DMs! ${utils.reactRobot(2)}`);

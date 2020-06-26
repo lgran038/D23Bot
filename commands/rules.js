@@ -5,16 +5,16 @@ module.exports = {
 	name: 'rules',
     description: 'Displays server rules set by !setrules and links to a channel if provided in !setrules',
     guildOnly: true,
+    dbOnly: true,
 	execute(message, args, db) {
-        const commandsCollection = db.collection('commands');
-        commandsCollection.find(
-            { name: 'rules' }
+        db.collection('servers').find(
+            { id: message.guild.id }
         ).toArray()
-            .then(results => {
-                if (!results.length || !results[0].data)
+            .then(servers => {
+                if (!servers.length || !servers[0].rules)
                     return message.channel.send(`${utils.reactError()}! Seems like the rules haven't been set yet.\nTry the \`${prefix}setrules\` command first.`);
                     
-                const {userID, channelID, data } = results[0];
+                const { channelID, data } = servers[0].rules;
                 let channel = null;
                 if (channelID)
                     channel = utils.getGuildChannelByID(channelID, message.guild);
