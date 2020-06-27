@@ -33,25 +33,25 @@ module.exports = {
         options.shift();
         
         let name, timeInput = null;
-        let hours = -1;
+        let hours = 0;
         if (options.length < 2 || !(/^[a-zA-Z]+$/.test(options[0])) || !(/^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(options[1]))) {
             return message.reply(`${utils.reactError()}! At least a name and time are needed to set a reminder.` + 
             `\nUse the command \`${prefix}help ${this.name}\` for more details.`);
         }
         else {
             
-            name = options[0];
+            name = options[0].toLowerCase();
             
             timeInput = options[1];
 
             //let utcOffset = moment().tz("America/Los_Angeles").isDST() ? "-0700" : "-0800";
             //let timezone = utcOffset == "-1700" ? "PDT" : "PST";
             let utcOffset = moment().tz("America/New_York").isDST() ? "-0400" : "-0500";
-            let timezone = utcOffset == "-1400" ? "EDT" : "EST";
+            let timezone = utcOffset == "-0400" ? "EDT" : "EST";
             
             let nowMoment = moment().utcOffset(utcOffset);
             let hhmm = options[1].split(":");
-            let roundedMins = Math.ceil(hhmm[1]/1) * 1;
+            let roundedMins = Math.ceil(hhmm[1]/15) * 15;
             let targetMoment = moment().utcOffset(utcOffset).hours(parseInt(hhmm[0])).minutes(parseInt(roundedMins)).seconds(0);
 
             if (targetMoment.isBefore(nowMoment))
@@ -74,8 +74,6 @@ module.exports = {
                 queued: false
             };
 
-            console.log(`\n\n${JSON.stringify(reminder, null, 2)}\n\n`);
-
             db.collection('servers').updateOne(
                 { id: message.guild.id, reminders: { $not: { $elemMatch: { name: name, type: 'all' } } } },
                 { $push: { reminders: reminder } },
@@ -84,7 +82,7 @@ module.exports = {
                     let numModified = result.result.nModified;
                     if (numModified == 0) {                        
                         db.collection('servers').updateOne(
-                            { id: message.guild.id, reminders: { $elemMatch: { name: name, type: 'all' } }},
+                            { id: message.guild.id, reminders: { $elemMatch: { name: name, type: 'all' } } },
                             { $set: { "reminders.$": reminder } },
                         )
                             .catch((error) => {
@@ -94,9 +92,9 @@ module.exports = {
                     }
 
                     let displayAt = `${moment(reminder.startTime).utcOffset(utcOffset).calendar()} ${timezone}`;
-                    let reply = `${utils.reactSuccess()}! Updated reminder **${reminder.name}**`;
+                    let reply = `${utils.reactSuccess()}! Updated reminder \`${reminder.name}\``;
                     reply += ` to be displayed \`${displayAt}\``;
-                    if (reminder.hours)
+                    if (reminder.hours > 0)
                         reply += ` and repeat every \`${reminder.hours}\` hour(s) from then`;
 
                     reply += `.\nUse the \`${prefix}allreminders\` command to view it!`

@@ -6,8 +6,10 @@ const utils = require('./utils.js');
 const { validate } = require('./validate.js');
 const dbServer = require('./db.js');
 const cron = require("node-cron");
-const { reminderCron , initReminders } = require('./reminders.js');
-const moment = require('moment-timezone');
+const { reminderCron , initReminders } = require('./commands/reminders.js');
+const { initGuilds } = require('./guilds.js');
+const { getRules } = require('./commands/rules.js');
+const { getWelcome } = require('./commands/setwelcome.js'); 
 require('dotenv').config();
 
 const {
@@ -31,15 +33,16 @@ for (const file of commandFiles) {
 }
 
 discordClient.once('ready', () => {
-    console.log('Discord Client Ready!\n');
+    console.log('Discord Client Ready!');
 
     const db = dbServer.getDb();
-    initReminders(db);
+    initGuilds(db, discordClient, "");
+    initReminders(db, discordClient);
 
     // runs job every X minutes
     let interval = 10;
-    cron.schedule(`*/${interval} * * * * *`, function () {
-        reminderCron(db, discordClient);
+    cron.schedule(`*/${interval} * * * *`, function () {
+        reminderCron(db, discordClient, false);
     });
     
 });
@@ -60,6 +63,16 @@ discordClient.on('message', message => {
         console.error(error);
         message.reply(`${utils.reactError()}! There was an error trying to execute that command!`);
     }
+});
+
+discordClient.on('guildMemberAdd', member => {
+    const db = dbServer.getDb();
+    getWelcome(db, member);
+});
+
+discordClient.on('guildCreate', guild => {
+    const db = dbServer.getDb();
+    initGuilds(db, discordClient, guild.id);
 });
 
 // login to Discord with your app's token

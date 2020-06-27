@@ -11,6 +11,15 @@ module.exports.getGuildMemberByUser = (user, guild) => {
 
 /**
  * Returns the member object of the user within the specified guild
+ * @param {string} userID 
+ * @param {Guild} guild 
+ */
+module.exports.getGuildMemberByID = (userID, guild) => {
+    return guild.members.cache.find(member => member.user.id == userID);
+}
+
+/**
+ * Returns the member object of the user within the specified guild
  * @param {string} channelID 
  * @param {Guild} guild 
  */
