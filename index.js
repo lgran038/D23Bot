@@ -76,4 +76,6 @@ discordClient.on('guildCreate', guild => {
 });
 
 // login to Discord with your app's token
-discordClient.login(DISCORD_TOKEN);
+discordClient.login(DISCORD_TOKEN).catch(err => {
+    console.log(err);
+});

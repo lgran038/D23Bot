@@ -7,11 +7,12 @@ module.exports = {
     description: `Returns a list of existing reminders`,
     guildOnly: true,
     dbOnly: true,
-    minimumRole: "Co-Leader",
 	execute(message, args, db) {
 
-        let utcOffset = moment().tz("America/New_York").isDST() ? "-0400" : "-0500";
-        let timezone = utcOffset == "-0400" ? "EDT" : "EST";
+        // let utcOffset = moment().tz("America/New_York").isDST() ? "-0400" : "-0500";
+        // let timezone = utcOffset == "-0400" ? "EDT" : "EST";
+        let utcOffset = moment().tz("America/Los_Angeles").isDST() ? "-0700" : "-0800";
+        let timezone = utcOffset == "-0700" ? "PDT" : "PST";
 
         db.collection('servers').findOne(
             { id: message.guild.id }

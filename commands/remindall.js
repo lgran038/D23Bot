@@ -3,13 +3,14 @@ const utils = require('../utils.js');
 const moment = require('moment-timezone');
 
 // moment().tz("America/Los_Angeles").isDST() ? "PDT" : "PST"
+// moment().tz("America/New_York").isDST() ? "EDT" : "EST"
 
 module.exports = {
 	name: 'remindall',
     description: `Sets a reminder for all rounded up to the nearest 15 minutes to repeat every set number of hours if provided.` 
                 + `\nThe reminder will be sent in the channel where it was set.`,
-    usage: `<name> <HH:MM time start ${moment().tz("America/New_York").isDST() ? "EDT" : "EST"}> <every X hours> <[[reminder]]>`,
-    example: `cogs 08:30 24 [[ Daily reminder to oil your cogs! ]]`,
+    usage: `<name> <HH:MM time start ${moment().tz("America/Los_Angeles").isDST() ? "PDT" : "PST"}> <every X hours> <[[reminder]]>`,
+    example: `cogs 15:30 24 [[ Daily reminder to oil your cogs! ]]`,
     guildOnly: true,
     dbOnly: true,
     minimumRole: "Co-Leader",
@@ -44,10 +45,10 @@ module.exports = {
             
             timeInput = options[1];
 
-            //let utcOffset = moment().tz("America/Los_Angeles").isDST() ? "-0700" : "-0800";
-            //let timezone = utcOffset == "-1700" ? "PDT" : "PST";
-            let utcOffset = moment().tz("America/New_York").isDST() ? "-0400" : "-0500";
-            let timezone = utcOffset == "-0400" ? "EDT" : "EST";
+            // let utcOffset = moment().tz("America/New_York").isDST() ? "-0400" : "-0500";
+            // let timezone = utcOffset == "-0400" ? "EDT" : "EST";
+            let utcOffset = moment().tz("America/Los_Angeles").isDST() ? "-0700" : "-0800";
+            let timezone = utcOffset == "-0700" ? "PDT" : "PST";
             
             let nowMoment = moment().utcOffset(utcOffset);
             let hhmm = options[1].split(":");
@@ -97,7 +98,7 @@ module.exports = {
                     if (reminder.hours > 0)
                         reply += ` and repeat every \`${reminder.hours}\` hour(s) from then`;
 
-                    reply += `.\nUse the \`${prefix}allreminders\` command to view it!`
+                    reply += `.\nUse the \`${prefix}reminders\` command to view it!`
 
                     return message.channel.send(reply);
                 })
